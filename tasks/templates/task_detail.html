@@ -1,29 +1,219 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<main class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4">
-            {{error}}
-            <h1 class="text-secondary">{{ task.title }}</h1>
-            <form method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button class="btn btn-primary">Update</button>
-            </form>
-            <div class="mt-5 d-flex">
-
-                <form action="{% url 'complete_task' task.id %}" method="POST">
-                    {% csrf_token %}
-                    <button class="btn btn-secondary">Complete</button>
-                </form>
-
-                <form action="{% url 'delete_task' task.id %}" method="POST">
-                    {% csrf_token %}
-                    <button class="btn btn-danger">Delete</button>
-                </form>
+<main class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8 px-4">
+    <div class="max-w-2xl mx-auto">
+        <!-- Tarjeta principal -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <!-- Header con información de la tarea -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 py-6 px-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-tasks text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">{{ task.title }}</h1>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="text-blue-100 text-sm">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    {{ task.created|date:"M d, Y" }}
+                                </span>
+                                {% if task.important %}
+                                <span class="bg-yellow-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                    <i class="fas fa-star mr-1"></i>Importante
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-blue-100 text-sm">ID: #{{ task.id }}</span>
+                    </div>
+                </div>
             </div>
+
+            <!-- Mensajes de error -->
+            {% if error %}
+            <div class="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+                <i class="fas fa-exclamation-triangle text-red-500 mt-0.5"></i>
+                <div>
+                    <p class="text-red-800 font-medium">Error</p>
+                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Formulario de edición -->
+            <div class="p-6">
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="space-y-2">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 flex items-center">
+                            {% if field.name == 'title' %}
+                                <i class="fas fa-heading mr-2 text-blue-600"></i>
+                            {% elif field.name == 'description' %}
+                                <i class="fas fa-file-lines mr-2 text-blue-600"></i>
+                            {% elif field.name == 'important' %}
+                                <i class="fas fa-star mr-2 text-blue-600"></i>
+                            {% else %}
+                                <i class="fas fa-pencil mr-2 text-blue-600"></i>
+                            {% endif %}
+                            {{ field.label }}
+                        </label>
+                        
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                        <div class="flex items-center">
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}" class="ml-3 text-sm text-gray-600 cursor-pointer">
+                                Marcar como importante
+                            </label>
+                        </div>
+                        {% else %}
+                        <div class="relative">
+                            {{ field }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                        <p class="text-xs text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <!-- Botones de acción -->
+                    <div class="flex space-x-4 pt-4">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Actualizar Tarea
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Acciones adicionales -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-cog mr-2 text-blue-600"></i>
+                        Acciones de Tarea
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Completar tarea -->
+                        <form action="{% url 'complete_task' task.id %}" method="POST" class="flex">
+                            {% csrf_token %}
+                            <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Marcar como Completada
+                            </button>
+                        </form>
+
+                        <!-- Eliminar tarea -->
+                        <form action="{% url 'delete_task' task.id %}" method="POST" class="flex">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar esta tarea? Esta acción no se puede deshacer.')" class="w-full bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center">
+                                <i class="fas fa-trash mr-2"></i>
+                                Eliminar Tarea
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Información adicional -->
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <h4 class="font-semibold text-blue-800 mb-2 flex items-center">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Información de la Tarea
+                        </h4>
+                        <ul class="text-blue-700 text-sm space-y-1">
+                            <li class="flex items-center">
+                                <i class="fas fa-calendar-plus mr-2 text-blue-600"></i>
+                                Creada: {{ task.created|date:"d/m/Y H:i" }}
+                            </li>
+                            {% if task.datecompleted %}
+                            <li class="flex items-center">
+                                <i class="fas fa-calendar-check mr-2 text-green-600"></i>
+                                Completada: {{ task.datecompleted|date:"d/m/Y H:i" }}
+                            </li>
+                            {% endif %}
+                            <li class="flex items-center">
+                                <i class="fas fa-user mr-2 text-blue-600"></i>
+                                Usuario: {{ task.user.username }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                        <h4 class="font-semibold text-purple-800 mb-2 flex items-center">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            Consejos
+                        </h4>
+                        <ul class="text-purple-700 text-sm space-y-1">
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2 text-green-500"></i>
+                                Actualiza los detalles si es necesario
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2 text-green-500"></i>
+                                Marca como importante las tareas prioritarias
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check mr-2 text-green-500"></i>
+                                Completa la tarea cuando finalices
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para volver -->
+        <div class="mt-6 text-center">
+            <a href="{% url 'tasks' %}" class="inline-flex items-center text-gray-600 hover:text-blue-600 font-medium transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Volver a la lista de tareas
+            </a>
         </div>
     </div>
 </main>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar placeholders si no existen
+        const titleField = document.querySelector('input[type="text"]');
+        if (titleField && !titleField.getAttribute('placeholder')) {
+            titleField.setAttribute('placeholder', 'Título de la tarea...');
+        }
+
+        const descriptionField = document.querySelector('textarea');
+        if (descriptionField && !descriptionField.getAttribute('placeholder')) {
+            descriptionField.setAttribute('placeholder', 'Descripción detallada de la tarea...');
+        }
+
+        // Confirmación para eliminar
+        const deleteButtons = document.querySelectorAll('form[action*="delete"] button');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('¿Estás seguro de que quieres eliminar esta tarea? Esta acción no se puede deshacer.')) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Confirmación para completar
+        const completeButtons = document.querySelectorAll('form[action*="complete"] button');
+        completeButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!confirm('¿Marcar esta tarea como completada?')) {
+                    e.preventDefault();
+                }
+            });
+        });
+    });
+</script>
+
 {% endblock %}

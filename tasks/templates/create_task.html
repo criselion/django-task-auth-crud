@@ -2,19 +2,147 @@
 
 {% block content %}
 
-
-
-<main class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4">
-            <form method="POST" class="card card-body mt-5">
-                <h1 class="text-center">Create Task</h1>
+<main class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
+    <div class="max-w-md mx-auto">
+        <!-- Tarjeta del formulario -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <!-- Header con gradiente -->
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 py-6 px-6">
+                <div class="flex items-center justify-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-plus-circle text-white text-lg"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-white text-center">Crear Nueva Tarea</h1>
+                </div>
+                <p class="text-blue-100 text-center mt-2 text-sm">Completa los detalles de tu nueva tarea</p>
+            </div>
+            
+            <!-- Formulario -->
+            <form method="POST" class="p-6 space-y-6">
                 {% csrf_token %}
-                {{form.as_p}}
-                <button class="btn btn-primary">Guardar</button>
+                
+                {% for field in form %}
+                <div class="space-y-2">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 flex items-center">
+                        {% if field.name == 'title' %}
+                            <i class="fas fa-heading mr-2 text-blue-600"></i>
+                        {% elif field.name == 'description' %}
+                            <i class="fas fa-file-lines mr-2 text-blue-600"></i>
+                        {% elif field.name == 'important' %}
+                            <i class="fas fa-star mr-2 text-blue-600"></i>
+                        {% else %}
+                            <i class="fas fa-pencil mr-2 text-blue-600"></i>
+                        {% endif %}
+                        {{ field.label }}
+                    </label>
+                    
+                    {% if field.field.widget.input_type == 'checkbox' %}
+                    <div class="flex items-center">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}" class="ml-3 text-sm text-gray-600 cursor-pointer">
+                            Marcar como importante
+                        </label>
+                    </div>
+                    {% else %}
+                    <div class="relative">
+                        {{ field }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if field.help_text %}
+                    <p class="text-xs text-gray-500">{{ field.help_text }}</p>
+                    {% endif %}
+                    
+                    {% if field.errors %}
+                    <div class="text-red-500 text-xs flex items-center space-x-1">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>{{ field.errors.0 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <!-- Botones de acción -->
+                <div class="flex space-x-4 pt-4">
+                    <a href="{% url 'tasks' %}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-save mr-2"></i>
+                        Guardar Tarea
+                    </button>
+                </div>
             </form>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <div class="flex items-start space-x-3">
+                <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <i class="fas fa-lightbulb text-white text-xs"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-blue-800 text-sm">Consejos para una buena tarea</h3>
+                    <ul class="text-blue-600 text-xs mt-1 space-y-1">
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-2 text-green-500"></i>
+                            Sé específico y claro en el título
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-2 text-green-500"></i>
+                            Incluye todos los detalles necesarios en la descripción
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-2 text-green-500"></i>
+                            Marca como importante solo las tareas prioritarias
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </main>
+
+<style>
+    /* Estilos para los campos del formulario usando clases de Tailwind */
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus,
+    input[type="email"]:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+        border-color: transparent;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    textarea {
+        resize: none;
+        min-height: 100px;
+    }
+
+    /* Estilos para el checkbox */
+    input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        color: #2563eb;
+        background-color: #f9fafb;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+    }
+
+</style>
 
 {% endblock %}

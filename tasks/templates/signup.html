@@ -2,30 +2,252 @@
 
 {% block content %}
 
+<main class="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 px-4">
+    <div class="max-w-md mx-auto">
+        <!-- Tarjeta del formulario -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <!-- Header con gradiente -->
+            <div class="bg-gradient-to-r from-green-600 to-blue-600 py-8 px-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                        <i class="fas fa-user-plus text-white text-2xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold text-white">Crear Cuenta</h1>
+                <p class="text-green-100 mt-2">Únete y comienza a organizar tus tareas</p>
+            </div>
 
-<main class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4 ">
-            <form method="POST" class="card card-body mt-5">
-                <h1 class="text-center">SignUp</h1>
-                {{error}}
+            <!-- Mensajes de error -->
+            {% if error %}
+            <div class="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
+                <i class="fas fa-exclamation-triangle text-red-500 mt-0.5"></i>
+                <div>
+                    <p class="text-red-800 font-medium">Error en el registro</p>
+                    <p class="text-red-600 text-sm mt-1">{{ error }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Formulario -->
+            <form method="POST" class="p-6 space-y-6">
                 {% csrf_token %}
-                <div class="md-3">
-                    <label for="username">Username:</label>
-                    <input id="username" type="text" name="username" class="form-control" placeholder="Username" required>
+                
+                <!-- Campo Username -->
+                <div class="space-y-2">
+                    <label for="username" class="block text-sm font-medium text-gray-700 flex items-center">
+                        <i class="fas fa-user mr-2 text-green-600"></i>
+                        Nombre de Usuario
+                    </label>
+                    <div class="relative">
+                        <input 
+                            id="username" 
+                            type="text" 
+                            name="username" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 pl-11"
+                            placeholder="Elige un nombre de usuario"
+                            required
+                            autocomplete="username"
+                        >
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Elige un nombre único que te identifique
+                    </p>
                 </div>
-                <div class="mb-3">
-                    <label for="password1">Password:</label>
-                    <input id="password1" type="password" name="password1" class="form-control" placeholder="password" required>
-                    <label for="password2">Confirm your password:</label>
-                    <input id="password2" type="password" name="password2" class="form-control" placeholder="confirm your password" required>
+
+                <!-- Campo Password -->
+                <div class="space-y-2">
+                    <label for="password1" class="block text-sm font-medium text-gray-700 flex items-center">
+                        <i class="fas fa-lock mr-2 text-green-600"></i>
+                        Contraseña
+                    </label>
+                    <div class="relative">
+                        <input 
+                            id="password1" 
+                            type="password" 
+                            name="password1" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 pl-11 pr-10"
+                            placeholder="Crea una contraseña segura"
+                            required
+                            autocomplete="new-password"
+                        >
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-primary">
-                    Resgistrarse
+
+                <!-- Campo Confirmar Password -->
+                <div class="space-y-2">
+                    <label for="password2" class="block text-sm font-medium text-gray-700 flex items-center">
+                        <i class="fas fa-lock mr-2 text-green-600"></i>
+                        Confirmar Contraseña
+                    </label>
+                    <div class="relative">
+                        <input 
+                            id="password2" 
+                            type="password" 
+                            name="password2" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 pl-11 pr-10"
+                            placeholder="Repite tu contraseña"
+                            required
+                            autocomplete="new-password"
+                        >
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicadores de fortaleza de contraseña -->
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <h3 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                        <i class="fas fa-shield-alt mr-2 text-green-600"></i>
+                        Tu contraseña debe contener:
+                    </h3>
+                    <ul class="text-xs text-gray-600 space-y-1">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2 text-xs"></i>
+                            Mínimo 8 caracteres
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2 text-xs"></i>
+                            Letras y números
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2 text-xs"></i>
+                            No usar información personal
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Botón de envío -->
+                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center">
+                    <i class="fas fa-user-plus mr-3"></i>
+                    Crear mi cuenta
                 </button>
             </form>
+
+            <!-- Enlaces adicionales -->
+            <div class="px-6 pb-6">
+                <div class="border-t border-gray-200 pt-6 text-center">
+                    <p class="text-gray-600 text-sm">
+                        ¿Ya tienes una cuenta?
+                        <a href="/signin/" class="text-green-600 hover:text-green-700 font-semibold ml-1 transition-colors">
+                            Inicia sesión aquí
+                            <i class="fas fa-arrow-right ml-1 text-xs"></i>
+                        </a>
+                    </p>
+                </div>
+                
+                <!-- Términos y condiciones -->
+                <div class="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5 text-sm"></i>
+                        <p class="text-blue-700 text-xs">
+                            Al registrarte, aceptas nuestros 
+                            <a href="#" class="font-semibold hover:underline">Términos de Servicio</a> 
+                            y 
+                            <a href="#" class="font-semibold hover:underline">Política de Privacidad</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Beneficios de registrarse -->
+        <div class="mt-8 grid grid-cols-1 gap-4">
+            <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                <h3 class="font-bold text-gray-800 text-lg mb-4 text-center flex items-center justify-center">
+                    <i class="fas fa-star text-yellow-500 mr-2"></i>
+                    Beneficios de registrarte
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <div>
+                            <p class="text-gray-700 font-medium text-sm">Gestión ilimitada de tareas</p>
+                            <p class="text-gray-500 text-xs">Organiza todas tus actividades sin límites</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <div>
+                            <p class="text-gray-700 font-medium text-sm">Acceso desde cualquier dispositivo</p>
+                            <p class="text-gray-500 text-xs">Usa la app en tu móvil, tablet o computadora</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <div>
+                            <p class="text-gray-700 font-medium text-sm">Sincronización en tiempo real</p>
+                            <p class="text-gray-500 text-xs">Tus cambios se guardan automáticamente</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
+
+<style>
+    /* Estilos personalizados para mejorar la experiencia */
+    input:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+    }
+    
+    /* Animación para el botón */
+    button:active {
+        transform: translateY(0);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agregar funcionalidad para mostrar/ocultar password
+        function setupPasswordToggle(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordToggle = document.createElement('button');
+            passwordToggle.type = 'button';
+            passwordToggle.className = 'absolute inset-y-0 right-0 pr-3 flex items-center';
+            passwordToggle.innerHTML = '<i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>';
+            
+            passwordToggle.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' 
+                    ? '<i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>'
+                    : '<i class="fas fa-eye-slash text-gray-400 hover:text-gray-600"></i>';
+            });
+            
+            passwordInput.parentNode.appendChild(passwordToggle);
+        }
+        
+        // Configurar toggles para ambos campos de contraseña
+        setupPasswordToggle('password1');
+        setupPasswordToggle('password2');
+        
+        // Focus en el primer campo al cargar la página
+        document.getElementById('username').focus();
+        
+        // Validación básica de coincidencia de contraseñas
+        const password1 = document.getElementById('password1');
+        const password2 = document.getElementById('password2');
+        
+        function validatePasswords() {
+            if (password1.value && password2.value && password1.value !== password2.value) {
+                password2.classList.add('border-red-500', 'ring-2', 'ring-red-200');
+            } else {
+                password2.classList.remove('border-red-500', 'ring-2', 'ring-red-200');
+            }
+        }
+        
+        password1.addEventListener('input', validatePasswords);
+        password2.addEventListener('input', validatePasswords);
+    });
+</script>
 
 {% endblock %}
